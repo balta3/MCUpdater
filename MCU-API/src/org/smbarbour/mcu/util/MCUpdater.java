@@ -36,7 +36,7 @@ import org.w3c.dom.*;
 
 
 public class MCUpdater {
-	
+
 	//private List<Module> modList = new ArrayList<Module>();
 	private Path MCFolder;
 	private Path archiveFolder;
@@ -47,7 +47,7 @@ public class MCUpdater {
 	public ImageIcon defaultIcon;
 	private String newestMC = "";
 	private Map<String,String> versionMap = new HashMap<String,String>();
-	
+
 	private static MCUpdater INSTANCE;
 
 	public static File getJarFile() {
@@ -58,14 +58,14 @@ public class MCUpdater {
 		}
 		return null;
 	}
-	
+
 	public static MCUpdater getInstance() {
 		if( INSTANCE == null ) {
 			INSTANCE = new MCUpdater();
 		}
 		return INSTANCE;
 	}
-	
+
 	public static String cpDelimiter() {
 		String osName = System.getProperty("os.name");
 		if (osName.startsWith("Windows")) {
@@ -74,7 +74,7 @@ public class MCUpdater {
 			return ":";
 		}
 	}
-	
+
 	private MCUpdater()
 	{
 		try {
@@ -135,7 +135,7 @@ public class MCUpdater {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public MCUApp getParent() {
 		return parent;
 	}
@@ -150,9 +150,9 @@ public class MCUpdater {
 		{
 			archiveFolder.toFile().mkdirs();
 			BufferedWriter writer = Files.newBufferedWriter(archiveFolder.resolve("mcuServers.dat"));
-			
+
 			Iterator<ServerList> it = serverlist.iterator();
-			
+
 			Set<String> urls = new HashSet<String>();
 			while(it.hasNext())
 			{
@@ -165,7 +165,7 @@ public class MCUpdater {
 				writer.write(urlIterator.next());
 				writer.newLine();
 			}
-			
+
 			writer.close();
 		}
 		catch( IOException x)
@@ -173,12 +173,12 @@ public class MCUpdater {
 			x.printStackTrace();
 		}
 	}
-	
+
 	public List<Backup> loadBackupList() {
 		List<Backup> bList = new ArrayList<Backup>();
 		try {
 			BufferedReader reader = Files.newBufferedReader(archiveFolder.resolve("mcuBackups.dat"));
-			
+
 			String entry = reader.readLine();
 			while(entry != null) {
 				String[] ele = entry.split("~~~~~");
@@ -187,33 +187,33 @@ public class MCUpdater {
 			}
 			reader.close();
 			return bList;
-			
+
 		} catch(FileNotFoundException notfound) {
 			_debug("File not found");
 		} catch(IOException ioe) {
-			ioe.printStackTrace();		
+			ioe.printStackTrace();
 		}
 		return bList;
 	}
-	
+
 	public void writeBackupList(List<Backup> backupList) {
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(archiveFolder.resolve("mcuBackups.dat"));
-			
+
 			Iterator<Backup> it = backupList.iterator();
-			
+
 			while(it.hasNext()) {
 				Backup entry = it.next();
 				writer.write(entry.getDescription() + "~~~~~" + entry.getFilename());
 				writer.newLine();
 			}
-			
+
 			writer.close();
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
-	
+
 	public List<ServerList> loadServerList(String defaultUrl)
 	{
 		List<ServerList> slList = new ArrayList<ServerList>();
@@ -246,7 +246,7 @@ public class MCUpdater {
 								ServerList sl = new ServerList(docEle.getAttribute("id"), docEle.getAttribute("name"), serverUrl, docEle.getAttribute("newsUrl"), docEle.getAttribute("iconUrl"), docEle.getAttribute("version"), docEle.getAttribute("serverAddress"), ServerPackParser.parseBoolean(docEle.getAttribute("generateList")), docEle.getAttribute("revision"));
 								sl.setMCUVersion(mcuVersion);
 								slList.add(sl);
-							}					
+							}
 						} else {
 							slList.add(new ServerList(parent.getAttribute("id"), parent.getAttribute("name"), serverUrl, parent.getAttribute("newsUrl"), parent.getAttribute("iconUrl"), parent.getAttribute("version"), parent.getAttribute("serverAddress"), ServerPackParser.parseBoolean(parent.getAttribute("generateList")), parent.getAttribute("revision")));
 						}
@@ -273,7 +273,7 @@ public class MCUpdater {
 		}
 		return slList;
 	}
-		
+
 	public Path getMCFolder()
 	{
 		return MCFolder;
@@ -297,7 +297,7 @@ public class MCUpdater {
 		try {
 			InputStream is = new FileInputStream(jar);
 			hash = DigestUtils.md5(is);
-			is.close();		
+			is.close();
 		} catch (FileNotFoundException e) {
 			//e.printStackTrace();
 			return "Not found";
@@ -326,12 +326,12 @@ public class MCUpdater {
 		}
 		return out;
 	}
-	
+
 	private void copyFile(File jar, File backupJar) {
 		try {
 			InputStream in = new FileInputStream(jar);
 			OutputStream out = new FileOutputStream(backupJar);
-			
+
 			byte[] buf = new byte[1024];
 			int len;
 			while ((len = in.read(buf)) > 0) {
@@ -464,7 +464,7 @@ public class MCUpdater {
 		}
 		return output;
 	}
-	
+
 	public void restoreBackup(File archive) {
 		File folder = MCFolder.toFile();
 		List<File> contents = recurseFolder(folder, true);
@@ -476,7 +476,7 @@ public class MCUpdater {
 			}
 		}
 		ListIterator<File> liClear = contents.listIterator(contents.size());
-		while(liClear.hasPrevious()) { 
+		while(liClear.hasPrevious()) {
 			File entry = liClear.previous();
 			entry.delete();
 		}
@@ -487,7 +487,7 @@ public class MCUpdater {
 		File jar = archiveFolder.resolve("mc-" + server.getVersion() + ".jar").toFile();
 		return jar.exists();
 	}
-	
+
 	public boolean installMods(ServerList server, List<Module> toInstall, boolean clearExisting, Properties instData) throws FileNotFoundException {
 		if (Version.requestedFeatureLevel(server.getMCUVersion(), "2.2")) {
 			// Sort mod list for InJar
@@ -525,7 +525,7 @@ public class MCUpdater {
 				}
 			}
 			ListIterator<File> liClear = contents.listIterator(contents.size());
-			while(liClear.hasPrevious()) { 
+			while(liClear.hasPrevious()) {
 				File entry = liClear.previous();
 				entry.delete();
 			}
@@ -533,7 +533,7 @@ public class MCUpdater {
 		Iterator<Module> itMods = toInstall.iterator();
 		File tmpFolder = archiveFolder.resolve("temp").toFile();
 		tmpFolder.mkdirs();
-		File buildJar = archiveFolder.resolve("build.jar").toFile();		
+		File buildJar = archiveFolder.resolve("build.jar").toFile();
 		if(buildJar.exists()) {
 			buildJar.delete();
 		}
@@ -554,13 +554,13 @@ public class MCUpdater {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		int modCount = toInstall.size();
 		int modsLoaded = 0;
 		int errorCount = 0;
-		
+
 		// TODO: consolidate download logic for mods & configs
-		
+
 		while(itMods.hasNext()) {
 			Module entry = itMods.next();
 			parent.setStatus("Mod: " + entry.getName());
@@ -634,7 +634,23 @@ public class MCUpdater {
 						++errorCount;
 						parent.log("! "+e.getMessage());
 						e.printStackTrace();
-					}					
+					}
+				} else if (entry.getTexturePack()) {
+					modPath = instancePath.resolve("texturepacks").resolve(entry.getId() + ".zip").toFile();
+					modPath.getParentFile().mkdirs();
+					try {
+						ModDownload normalMod = new ModDownload(modURL, modPath, entry.getMD5());
+						if( normalMod.cacheHit ) {
+							parent.log("  Installing in /texturepacks (cached).");
+						} else {
+							parent.log("  Installing in /texturepacks (downloaded).");
+						}
+						_debug(normalMod.url + " -> " + normalMod.getDestFile().getPath());
+					} catch (Exception e) {
+						++errorCount;
+						parent.log("! "+e.getMessage());
+						e.printStackTrace();
+					}
 				} else {
 					if (entry.getPath().equals("")){
 						modPath = instancePath.resolve("mods").resolve(entry.getId() + ".jar").toFile();
@@ -661,7 +677,7 @@ public class MCUpdater {
 				Iterator<ConfigFile> itConfigs = entry.getConfigs().iterator();
 				while(itConfigs.hasNext()) {
 					final ConfigFile cfEntry = itConfigs.next();
-					final String MD5 = cfEntry.getMD5(); 
+					final String MD5 = cfEntry.getMD5();
 					_debug(cfEntry.getUrl());
 					URL configURL = new URL(cfEntry.getUrl());
 					final File confFile = instancePath.resolve(cfEntry.getPath()).toFile();
@@ -681,7 +697,7 @@ public class MCUpdater {
 					if( MD5 != null ) {
 						final boolean cached = DownloadCache.cacheFile(confFile, MD5);
 						if( cached ) {
-							_debug("\nSaved in cache");							
+							_debug("\nSaved in cache");
 						}
 					}
 				}
@@ -745,13 +761,13 @@ public class MCUpdater {
 		}
 		List<File> tempFiles = recurseFolder(tmpFolder,true);
 		ListIterator<File> li = tempFiles.listIterator(tempFiles.size());
-		while(li.hasPrevious()) { 
+		while(li.hasPrevious()) {
 			File entry = li.previous();
 			entry.delete();
 		}
 		return true;
 	}
-	
+
 	public void writeMCServerFile(String name, String ip, String instance) {
 		byte[] header = new byte[]{
 				0x0A,0x00,0x00,0x09,0x00,0x07,0x73,0x65,0x72,0x76,0x65,0x72,0x73,0x0A,
@@ -784,7 +800,7 @@ public class MCUpdater {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static void openLink(URI uri) {
@@ -795,7 +811,7 @@ public class MCUpdater {
 			_log("Failed to open link " + uri.toString());
 		}
 	}
-	
+
 	private static void _log(String msg) {
 		if( INSTANCE.parent != null ) {
 			INSTANCE.parent.log(msg);
@@ -832,7 +848,7 @@ public class MCUpdater {
 			}
 		}
 	}
-	
+
 	private void doPatch(File requestedJar, File newestJar, String version) {
 		try {
 			URL patchURL = new URL("http://files.mcupdater.com/mcu_patches/" + newestMC.replace(".", "") + "to" + version.replace(".","") + ".patch");

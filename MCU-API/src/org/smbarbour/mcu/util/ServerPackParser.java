@@ -22,7 +22,7 @@ public class ServerPackParser {
 	public static Document readXmlFromFile(File packFile) throws Exception
 	{
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		
+
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			return db.parse(packFile);
@@ -35,7 +35,7 @@ public class ServerPackParser {
 		}
 		return null;
 	}
-	
+
 	public static Document readXmlFromUrl(String serverUrl) throws Exception
 	{
 		System.out.println("readXMLFromUrl(" + serverUrl + ")");
@@ -51,7 +51,7 @@ public class ServerPackParser {
 			return null;
 		}
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		
+
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			return db.parse(server.openStream());
@@ -91,7 +91,7 @@ public class ServerPackParser {
 		}
 		return modList;
 	}
-	
+
 	private static Module getModule(Element modEl)
 	{
 		String name = modEl.getAttribute("name");
@@ -107,20 +107,21 @@ public class ServerPackParser {
 		Boolean extract = getBooleanValue(modEl,"Extract");
 		Boolean inRoot = getBooleanValue(modEl,"InRoot");
 		Boolean coreMod = getBooleanValue(modEl,"CoreMod");
+		Boolean texturePack = getBooleanValue(modEl,"TexturePack");
 		String md5 = getTextValue(modEl,"MD5");
 		List<ConfigFile> configs = new ArrayList<ConfigFile>();
 		NodeList nl = modEl.getElementsByTagName("ConfigFile");
 //		_log("NodeList[getLength]: " + nl.getLength());
-		for(int i = 0; i < nl.getLength(); i++) 
+		for(int i = 0; i < nl.getLength(); i++)
 		{
 			Element el = (Element)nl.item(i);
 			ConfigFile cf = getConfigFile(el);
 			configs.add(cf);
 		}
-		Module m = new Module(name, id, url, depends, required, inJar, jarOrder, extract, inRoot, isDefault, coreMod, md5, configs, side, path);	
+		Module m = new Module(name, id, url, depends, required, inJar, jarOrder, extract, inRoot, isDefault, coreMod, texturePack, md5, configs, side, path);
 		return m;
 	}
-	
+
 	private static ConfigFile getConfigFile(Element cfEl)
 	{
 		String url = getTextValue(cfEl,"URL");
@@ -129,16 +130,16 @@ public class ServerPackParser {
 		ConfigFile cf = new ConfigFile(url,path,md5);
 		return cf;
 	}
-	
+
 	private static int getIntValue(Element ele, String tagName) {
 		int value = 0;
 		try {
 			value = Integer.parseInt(getTextValue(ele,tagName));
-		} catch (NumberFormatException e) {			
+		} catch (NumberFormatException e) {
 		}
 		return value;
 	}
-	
+
 	private static String getTextValue(Element ele, String tagName) {
 		String textVal = null;
 		NodeList nl = ele.getElementsByTagName(tagName);
@@ -151,7 +152,7 @@ public class ServerPackParser {
 		}
 		return textVal;
 	}
-	
+
 	private static String unescapeXML(String nodeValue) {
 		return nodeValue.replace("&amp;", "&").replace("&quot;", "\"").replace("&apos;","'").replace("&lt;", "<").replace("&gt;", ">");
 	}
@@ -169,7 +170,7 @@ public class ServerPackParser {
 		}
 		//return modList;
 	}
-	
+
 	public static List<Module> loadFromURL(String serverUrl, String serverId)
 	{
 		try {
@@ -180,7 +181,7 @@ public class ServerPackParser {
 		}
 		//return modList;
 	}
-	
+
 	public static boolean parseBoolean(String attribute) {
 		if (attribute.equalsIgnoreCase("false")) {
 			return false;

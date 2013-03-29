@@ -17,11 +17,12 @@ public class Module {
 	private Boolean inRoot;
 	private Boolean isDefault;
 	private Boolean coreMod;
+    private Boolean texturePack;
 	private String md5;
 	private ModSide side;
 	private List<ConfigFile> configs;
-	
-	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, int jarOrder, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, String md5, List<ConfigFile> configs, String side, String path)
+
+	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, int jarOrder, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, Boolean texturePack, String md5, List<ConfigFile> configs, String side, String path)
 	{
 		this.setName(name);
 		this.setId(id);
@@ -34,6 +35,7 @@ public class Module {
 		this.setExtract(extract);
 		this.setInRoot(inRoot);
 		this.setCoreMod(coreMod);
+        this.setTexturePack(texturePack);
 		this.setMD5(md5);
 		this.setSide(side);
 		this.setPath(path);
@@ -52,44 +54,44 @@ public class Module {
 	@Deprecated
 	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, String md5, List<ConfigFile> configs)
 	{
-		this(name, id, url, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, md5, configs, null, null);
+		this(name, id, url, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, false, md5, configs, null, null);
 	}
 
 	public String getName()
 	{
 		return name;
 	}
-	
+
 	public void setName(String name)
 	{
 		this.name=name;
 	}
-	
+
 	public String getUrl()
 	{
 		return url;
 	}
-	
+
 	public void setUrl(String url)
 	{
 		this.url=url;
 	}
-	
+
 	public Boolean getRequired()
 	{
 		return required;
 	}
-	
+
 	public void setRequired(Boolean required)
 	{
 		this.required=required;
 	}
-	
+
 	public Boolean getInJar()
 	{
 		return inJar;
 	}
-	
+
 	public void setInJar(Boolean inJar)
 	{
 		this.inJar=inJar;
@@ -110,11 +112,11 @@ public class Module {
 	public void setInRoot(Boolean inRoot) {
 		this.inRoot = inRoot;
 	}
-	
+
 	public String getMD5() {
 		return (md5 == null ? "" : md5);
 	}
-	
+
 	public void setMD5(String md5) {
 		if( md5 != null )
 			this.md5 = md5.toLowerCase(Locale.ENGLISH);
@@ -123,7 +125,7 @@ public class Module {
 	public Boolean getIsDefault() {
 		return isDefault;
 	}
-	
+
 	public void setIsDefault(Boolean isDefault) {
 		this.isDefault = isDefault;
 	}
@@ -132,7 +134,7 @@ public class Module {
 	{
 		return configs;
 	}
-	
+
 	public void setConfigs(List<ConfigFile> configs)
 	{
 		this.configs = configs;
@@ -144,6 +146,14 @@ public class Module {
 
 	public void setCoreMod(Boolean coreMod) {
 		this.coreMod = coreMod;
+	}
+
+	public Boolean getTexturePack() {
+		return texturePack;
+	}
+
+	public void setTexturePack(Boolean texturePack) {
+		this.texturePack = texturePack;
 	}
 
 	public String getId() {
@@ -161,7 +171,7 @@ public class Module {
 	public void setDepends(String depends) {
 		this.depends = depends;
 	}
-	
+
 	@Override
 	public String toString() {
 		return id;
@@ -186,7 +196,7 @@ public class Module {
 			setSide( ModSide.BOTH );
 		}
 	}
-	
+
 	public boolean isClientSide() {
 		return side != ModSide.SERVER;
 	}
