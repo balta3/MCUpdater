@@ -10,11 +10,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.*;
 import java.util.zip.*;
+import org.apache.commons.io.FileUtils;
 
 import org.smbarbour.mcu.MCUApp;
 
@@ -108,15 +110,15 @@ public class Archive {
 		}
 		byte[] buf = new byte[1024];
 
-		boolean renameStatus = archive.renameTo(tempFile);
-		if (!renameStatus)
-		{
-			throw new RuntimeException("could not rename the file " + archive.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
-		}
+        FileUtils.moveFile(archive, tempFile);
 
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(tempFile));
 		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(archive));
 
+        String basePathStr = basePath.getAbsolutePath();
+        if (!basePathStr.endsWith(System.getProperty("file.separator"))) {
+            basePathStr += System.getProperty("file.separator");
+        }
 		ZipEntry entry = zis.getNextEntry();
 		while (entry != null)
 		{
@@ -126,7 +128,7 @@ public class Archive {
 			while (iterator.hasNext())
 			{
 				File f = iterator.next();
-				if (f.getName().equals(name)) {
+				if (f.getPath().replace(basePathStr, "").equals(name)) {
 					notInFiles = false;
 					break;
 				}
@@ -146,13 +148,13 @@ public class Archive {
 		{
 			File f = iterator.next();
 			if(f.isDirectory()) {
-				System.out.println("addToZip: " + f.getPath().replace(basePath.getPath(), "") + "/");
-				zos.putNextEntry(new ZipEntry(f.getPath().replace(basePath.getPath(), "") + "/"));
+				System.out.println("addToZip: " + f.getPath().replace(basePathStr, "") + "/");
+				zos.putNextEntry(new ZipEntry(f.getPath().replace(basePathStr, "") + "/"));
 				zos.closeEntry();
 			} else {
 				InputStream in = new FileInputStream(f);
-				System.out.println("addToZip: " + f.getPath().replace(basePath.getPath(), ""));
-				zos.putNextEntry(new ZipEntry(f.getPath().replace(basePath.getPath(), "")));
+				System.out.println("addToZip: " + f.getPath().replace(basePathStr, ""));
+				zos.putNextEntry(new ZipEntry(f.getPath().replace(basePathStr, "")));
 				int len;
 				while ((len = in.read(buf)) > 0) {
 					zos.write(buf, 0, len);
@@ -261,7 +263,7 @@ public class Archive {
 //			}
 //
 //			private void putIntoJar(ZipInputStream zipIn, JarOutputStream out) throws IOException {
-//				ZipEntry zentry = new ZipEntry(zipIn.getNextEntry().getName());	
+//				ZipEntry zentry = new ZipEntry(zipIn.getNextEntry().getName());
 //				while(zentry != null) {
 //					try {
 //						out.putNextEntry(zentry);
@@ -281,7 +283,7 @@ public class Archive {
 //					}catch (NullPointerException e) {
 //						zentry = null;
 //					}
-//				}				
+//				}
 //			}
 //		}.start();
 //		//TODO: Log message ("Done")
@@ -291,11 +293,7 @@ public class Archive {
        File tempFile = File.createTempFile(zipFile.getName(), null);
        tempFile.delete();
 
-       boolean renameOk=zipFile.renameTo(tempFile);
-       if (!renameOk)
-       {
-           throw new RuntimeException("could not rename the file "+zipFile.getAbsolutePath()+" to "+tempFile.getAbsolutePath());
-       }
+       FileUtils.moveFile(zipFile, tempFile);
        byte[] buf = new byte[1024];
 
        ZipInputStream zin = new ZipInputStream(new FileInputStream(tempFile));
@@ -322,7 +320,7 @@ public class Archive {
            }
            entry = zin.getNextEntry();
        }
-       // Close the streams        
+       // Close the streams
        zin.close();
        // Compress the files
        for (int i = 0; i < files.length; i++) {
