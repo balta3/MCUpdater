@@ -118,7 +118,15 @@ public class ServerPackParser {
 			ConfigFile cf = getConfigFile(el);
 			configs.add(cf);
 		}
-		Module m = new Module(name, id, url, depends, required, inJar, jarOrder, extract, inRoot, isDefault, coreMod, texturePack, md5, configs, side, path);
+        List<ModuleAddon> addons = new ArrayList<ModuleAddon>();
+		nl = modEl.getElementsByTagName("Addon");
+		for(int i = 0; i < nl.getLength(); i++)
+		{
+			Element el = (Element)nl.item(i);
+			ModuleAddon addon = getAddon(el);
+			addons.add(addon);
+		}
+		Module m = new Module(name, id, url, depends, required, inJar, jarOrder, extract, inRoot, isDefault, coreMod, texturePack, md5, configs, addons, side, path);
 		return m;
 	}
 
@@ -129,6 +137,17 @@ public class ServerPackParser {
 		String md5 = getTextValue(cfEl,"MD5");
 		ConfigFile cf = new ConfigFile(url,path,md5);
 		return cf;
+	}
+
+	private static ModuleAddon getAddon(Element cfEl)
+	{
+		String url = getTextValue(cfEl,"URL");
+		String path = getTextValue(cfEl,"Path");
+		String md5 = getTextValue(cfEl,"MD5");
+        String forModule = cfEl.getAttribute("for");
+		Boolean InZip = getBooleanValue(cfEl,"InZip");
+		ModuleAddon addon = new ModuleAddon(url,path,md5, forModule, InZip);
+		return addon;
 	}
 
 	private static int getIntValue(Element ele, String tagName) {

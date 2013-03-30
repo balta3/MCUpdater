@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.smbarbour.mcu.MCUApp;
 import org.smbarbour.mcu.Version;
 import org.smbarbour.mcu.util.Archive;
@@ -559,6 +560,11 @@ public class MCUpdater {
 		int modsLoaded = 0;
 		int errorCount = 0;
 
+        List<String> installedModuleIds = new ArrayList<String>();
+        for (Module module : toInstall) {
+            installedModuleIds.add(module.getId());
+        }
+
 		// TODO: consolidate download logic for mods & configs
 
 		while(itMods.hasNext()) {
@@ -569,7 +575,7 @@ public class MCUpdater {
 				_debug("Mod @ "+entry.getUrl());
 				URL modURL = new URL(entry.getUrl());
 				//String modFilename = modURL.getFile().substring(modURL.getFile().lastIndexOf('/'));
-				File modPath;
+				File modPath = null;
 				if(entry.getInJar()) {
 					if (updateJar) {
 						//modPath = new File(tmpFolder.getPath() + sep + loadOrder + ".zip");
@@ -700,6 +706,38 @@ public class MCUpdater {
 							_debug("\nSaved in cache");
 						}
 					}
+				}
+				Iterator<ModuleAddon> itAddons = entry.getAddons().iterator();
+				while(itAddons.hasNext()) {
+					final ModuleAddon addon = itAddons.next();
+                    if (addon.getForModule() == null || addon.getForModule().isEmpty() || installedModuleIds.contains(addon.getForModule())) {
+                        try {
+                            final String MD5 = addon.getMD5();
+                            _debug(addon.getUrl());
+                            URL addonURL = new URL(addon.getUrl());
+                            final File addonFile;
+                            if (addon.getPath() != null && !addon.getPath().isEmpty()) {
+                                addonFile = instancePath.resolve(addon.getPath()).toFile();
+                            } else {
+                                addonFile = new File(tmpFolder, (entry.getId() + ".zip"));
+                            }
+                            addonFile.getParentFile().mkdirs();
+                            ModDownload download = new ModDownload(addonURL, addonFile, MD5);
+                            if (addon.getInZip()) {
+                                File tmpAddonFolder = new File(tmpFolder, entry.getId());
+                                tmpAddonFolder.mkdirs();
+                                Archive.extractZip(addonFile, tmpAddonFolder);
+                                parent.log("  adding addon to " + modPath);
+                                Archive.addToZip(modPath, new ArrayList<File>(FileUtils.listFiles(tmpAddonFolder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)), tmpAddonFolder.getAbsoluteFile());
+                                FileUtils.deleteDirectory(tmpAddonFolder);
+                                addonFile.delete();
+                            }
+                        } catch (Exception e) {
+                            ++errorCount;
+                            parent.log("! "+e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
 				}
 			} catch (MalformedURLException e) {
 				++errorCount;

@@ -21,8 +21,9 @@ public class Module {
 	private String md5;
 	private ModSide side;
 	private List<ConfigFile> configs;
+	private List<ModuleAddon> addons;
 
-	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, int jarOrder, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, Boolean texturePack, String md5, List<ConfigFile> configs, String side, String path)
+	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, int jarOrder, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, Boolean texturePack, String md5, List<ConfigFile> configs, List<ModuleAddon> addons, String side, String path)
 	{
 		this.setName(name);
 		this.setId(id);
@@ -45,6 +46,12 @@ public class Module {
 		} else {
 			this.configs = new ArrayList<ConfigFile>();
 		}
+		if(addons != null)
+		{
+			this.addons = addons;
+		} else {
+			this.addons = new ArrayList<ModuleAddon>();
+		}
 	}
 
 	private void setJarOrder(int jarOrder) {
@@ -54,7 +61,7 @@ public class Module {
 	@Deprecated
 	public Module(String name, String id, String url, String depends, Boolean required, Boolean inJar, Boolean extract, Boolean inRoot, Boolean isDefault, Boolean coreMod, String md5, List<ConfigFile> configs)
 	{
-		this(name, id, url, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, false, md5, configs, null, null);
+		this(name, id, url, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, false, md5, configs, null, null, null);
 	}
 
 	public String getName()
@@ -139,6 +146,14 @@ public class Module {
 	{
 		this.configs = configs;
 	}
+
+    public List<ModuleAddon> getAddons() {
+        return addons;
+    }
+
+    public void setAddons(List<ModuleAddon> addons) {
+        this.addons = addons;
+    }
 
 	public Boolean getCoreMod() {
 		return coreMod;
