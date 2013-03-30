@@ -1125,7 +1125,7 @@ public class ServerForm extends MCUApp {
 				btnModAdd.setEnabled(false);
 				btnModAdd.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Module newMod = new Module(txtModName.getText(), txtModId.getText(), txtModUrl.getText(), txtModDepends.getText(), chkModRequired.isSelected(), chkModInJar.isSelected(), (int)spinModInJarPriority.getValue(), chkModExtract.isSelected(), chkModInRoot.isSelected(), chkModIsDefault.isSelected(), chkModCoreMod.isSelected(), txtModMD5.getText(), null, lstModSide.getSelectedItem().toString(), txtModPath.getText());
+						Module newMod = new Module(txtModName.getText(), txtModId.getText(), txtModUrl.getText(), txtModDepends.getText(), chkModRequired.isSelected(), chkModInJar.isSelected(), (int)spinModInJarPriority.getValue(), chkModExtract.isSelected(), chkModInRoot.isSelected(), chkModIsDefault.isSelected(), chkModCoreMod.isSelected(), false, txtModMD5.getText(), null, lstModSide.getSelectedItem().toString(), txtModPath.getText());
 						modelModule.add(newMod);
 						modelParentId.add(newMod.getId());
 						modelParentId.sort();
@@ -1591,13 +1591,13 @@ public class ServerForm extends MCUApp {
 			} catch (InvalidSyntaxException e) {
 				e.printStackTrace();
 			} finally {
-				AddModule(new Module(name, id, downloadUrl, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, md5, null, "both", null));
-			}			
+				AddModule(new Module(name, id, downloadUrl, depends, required, inJar, 0, extract, inRoot, isDefault, coreMod, false, md5, null, "both", null));
+			}
 
 			Files.delete(tempFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	protected void importConfigEntry() {
@@ -1830,7 +1830,7 @@ public class ServerForm extends MCUApp {
 
 	private void updateModuleEntry() {
 		modelParentId.replaceEntry(lstModules.getSelectedValue().getId(), txtModId.getText());
-		Module newMod = new Module(txtModName.getText(), txtModId.getText(), txtModUrl.getText(), txtModDepends.getText(), chkModRequired.isSelected(), chkModInJar.isSelected(), (int)spinModInJarPriority.getValue(), chkModExtract.isSelected(), chkModInRoot.isSelected(), chkModIsDefault.isSelected(), chkModCoreMod.isSelected(), txtModMD5.getText(), null, lstModSide.getSelectedItem().toString(), txtModPath.getText());
+		Module newMod = new Module(txtModName.getText(), txtModId.getText(), txtModUrl.getText(), txtModDepends.getText(), chkModRequired.isSelected(), chkModInJar.isSelected(), (int)spinModInJarPriority.getValue(), chkModExtract.isSelected(), chkModInRoot.isSelected(), chkModIsDefault.isSelected(), chkModCoreMod.isSelected(), false, txtModMD5.getText(), null, lstModSide.getSelectedItem().toString(), txtModPath.getText());
 		modelModule.replace(moduleCurrentSelection, newMod);
 		moduleDirty = false;
 		serverDirty = true;
